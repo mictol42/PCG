@@ -1,8 +1,11 @@
 import sys
 from collections import defaultdict
 
+# read in the argument; name of deck file 
 card_deck = sys.argv[1]
 
+# n choose k implementation
+# from stack overflow. 
 def choose(n, k):
     """
     A fast way to calculate binomial coefficients by Andrew Dalke (contrib).
@@ -17,19 +20,7 @@ def choose(n, k):
         return ntok // ktok
     else:
         return 0
-
-f = open(card_deck,'r')
-
-#deck = defaultdict(int)
-deck = []
-
-for line in f:
-    words = line.split()
-    deck.append((words[0],words[1]))
-
-print deck
-
-
+		
 # not having a mulligan equation
 # no idea what this means but this is implemented formula 1 
 # from the documnet
@@ -37,7 +28,6 @@ print deck
 # M: number of cards left in the deck 
 # N: number of cards drawing 
 # X: number of copies of the specific card you want 
-
 def formula_one(M,N,X):
 	den = choose(M,N)
 	
@@ -58,7 +48,6 @@ def formula_one(M,N,X):
 # N: how many cards you are drawing 
 # M: number of cards left in the deck 
 # Y: number of basics in the deck 
-
 def formula_two(M,N,Y,A):
 	
 	num_sum = 0.0
@@ -110,11 +99,28 @@ def formula_four(M,N,X,Y):
 		den_sum += choose(M-Y,N-k) * choose(Y,k)
 		
 	return float(num_sum) / float(den_sum)
+		
+		
+f = open(card_deck,'r')
+
+# reading in deck
+# i really don't know what implementation works best rn 
+# rn the deck is two things:
+# deck_list: list of everything 
+# deck_dict: (name,type) -> count of this 
+# not sure what will be useful. not sure what you need to calculate. 
+
+#deck = defaultdict(int)
+deck_list = []
+deck_dict = defaultdict(int)
+
+for line in f:
+    words = line.split()
+	pair = (words[0],words[1])
+    deck.append(pair)
+	deck_dict[pair] += 1
 	
-	
-	
-	
-			
+print deck
 	
 	
 	
