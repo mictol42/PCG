@@ -60,11 +60,14 @@ def formula_two(M,N,Y,A):
 	den_sum = 0.0
 	for k in range(1,N+1):
 		den_sum += choose(M-Y,N-k)*choose(Y,k)
-	
+
+	print num_sum 
+	print den_sum
+		
 	return float(num_sum) / float(den_sum)
 	
 # tester
-# print formula_two(60,7,2,2)	
+# print formula_two(60,7,2,1)	
 # it works 
 
 # probability of getting an ideal starter 
@@ -77,6 +80,8 @@ def formula_three(Y,Yi):
 	N = 7
 	num = formula_two(M,N,Yi,1)
 	den = formula_two(M,N,Y,1)
+
+	
 	
 	return float(num / den)
 	
@@ -119,22 +124,26 @@ deck_dict = defaultdict(int)
 count_types = defaultdict(int)
 
 for line in f:
-    words = line.split()
+	words = line.split()
 	pair = (words[0],words[1])
-    deck.append(pair)
+	deck_list.append(pair)
 	deck_dict[pair] += 1
 	count_types[words[1]] += 1 
 	
 #print deck
 
 # count number of basics 
-num_basics = count_types["basic"] + count_types["perferred_basic"]
+num_basics = count_types["Basic"] + count_types["Prefeered_Basic"]
 
 # count number of perfred 
-num_perfered = count_types["perferred_basic"]
+num_perfered = count_types["Prefeered_Basic"]
+
+#print num_basics 
+#print num_perfered 
 
 mulligan = formula_one(60,7,num_basics)
-ideal = formula_three(num_basics,num_perfered)
+#ideal = formula_three(num_basics,num_perfered)
+ideal = formula_one(60,8,num_perfered)
 
 print "Probability of not having a Mulligan: " + str(mulligan * 100)
 print "Probability of starting with an ideal starter: " + str(ideal * 100)
@@ -145,10 +154,20 @@ for card in deck_dict:
 	name = card[0]
 	type = card[1] 
 	count = deck_dict[card]
-	if not ((type == "basic") | (type == "perferred_basic")):
+	if not ((type == "Basic") | (type == "Prefeered_Basic")):
 		prob = formula_four(60,8,count,num_basics)
 	else:
-		prob = formula_three(num_basics,count)
+		prob = formula_one(60,8,count)
 	print name + ":\t" + str(prob * 100)
-
-
+	
+print ""
+print "Probability of having each type in opening hand"
+print "(Assuming you have at least 1 Basic in hand already)"
+for card in count_types:
+	type = card
+	count = count_types[card]
+	if not ((type == "Basic") | (type == "Prefeered_Basic")):
+		prob = formula_four(60,8,count,num_basics)
+	else:
+		prob = formula_one(60,8,count)
+	print type + ":\t" + str(prob * 100)
