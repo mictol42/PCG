@@ -20,6 +20,8 @@ def choose(n, k):
         return ntok // ktok
     else:
         return 0
+
+
 		
 # not having a mulligan equation
 # no idea what this means but this is implemented formula 1 
@@ -27,7 +29,8 @@ def choose(n, k):
 # given:
 # M: number of cards left in the deck 
 # N: number of cards drawing 
-# X: number of copies of the specific card you want 
+# X: number of copies of the specific card you want
+#  x: number of basics (12)
 def formula_one(M,N,X):
 	den = choose(M,N)
 	
@@ -72,8 +75,8 @@ def formula_two(M,N,Y,A):
 def formula_three(Y,Yi):
 	M = 60 
 	N = 7
-	num = formula_two(M,7,Yi,1)
-	den = formula_two(N,7,Y,1)
+	num = formula_two(M,N,Yi,1)
+	den = formula_two(M,N,Y,1)
 	
 	return float(num / den)
 	
@@ -113,31 +116,39 @@ f = open(card_deck,'r')
 #deck = defaultdict(int)
 deck_list = []
 deck_dict = defaultdict(int)
+count_types = defaultdict(int)
 
 for line in f:
     words = line.split()
 	pair = (words[0],words[1])
     deck.append(pair)
 	deck_dict[pair] += 1
+	count_types[words[1]] += 1 
 	
-print deck
-	
-	
-	
-	
-	
-	
-	
-	
-	
+#print deck
 
+# count number of basics 
+num_basics = count_types["basic"] + count_types["perferred_basic"]
 
-	
-	
-	
-	
+# count number of perfred 
+num_perfered = count_types["perferred_basic"]
 
+mulligan = formula_one(60,7,num_basics)
+ideal = formula_three(num_basics,num_perfered)
 
-
+print "Probability of not having a Mulligan: " + str(mulligan * 100)
+print "Probability of starting with an ideal starter: " + str(ideal * 100)
+print ""
+print "Probability of having each card in opening hand"
+print "(Assuming you have at least 1 Basic in hand already)"
+for card in deck_dict:
+	name = card[0]
+	type = card[1] 
+	count = deck_dict[card]
+	if not ((type == "basic") | (type == "perferred_basic")):
+		prob = formula_four(60,8,count,num_basics)
+	else:
+		prob = formula_three(num_basics,count)
+	print name + ":\t" + str(prob * 100)
 
 
